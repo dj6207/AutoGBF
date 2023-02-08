@@ -1,0 +1,9 @@
+.venv/
+yolov5/
+images/
+__pycache__/
+dataset/
+
+*.pt
+*.zip
+*.bat
