@@ -1,4 +1,3 @@
-import pyautogui
+import database.dataBase as db
 
-pyautogui.moveTo(x=295, y=1010)
-pyautogui.click()
+db.init_database(".\\database\\data_classes.pickle")

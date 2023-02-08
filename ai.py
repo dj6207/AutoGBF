@@ -3,6 +3,7 @@ import cv2 as cv
 import pyautogui
 import database.dataBase as db
 import time
+import random
 from queue import Queue
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
@@ -10,10 +11,14 @@ from tools.windowCapture import WinCapture
 from inputParser import InputParser
 
 
+
+# Notes
+# Try to make the mouse movement more realistic
 class Ai:
     #Inintalizes the ai
-    def __init__(self, model_path="./model/best_dataset1.pt", browser_name="Granblue Fantasy - Google Chrome", use_model=True):
+    def __init__(self, model_path="./model/best_dataset1.pt", browser_name="Granblue Fantasy - Google Chrome", use_model=True, sleep_time=7):
         # load custom model
+        self.sleep_time = sleep_time
         if use_model:
             self.use_model = True
             self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload = True)
@@ -29,9 +34,9 @@ class Ai:
             self.wincap = WinCapture(browser_name)
         else:
             self.use_model = False
-            print("Not AI model is used")
+            print("No AI model is used")
         # load data base
-        self.data_base = db.load_data_classes()
+        self.data_base = db.load_data_classes(".\\database\\data_classes.pickle")
         # load inputs into queue
         self.parser = InputParser()
         self.input_queue = self.parser.load_queue()
@@ -95,15 +100,14 @@ class Ai:
         pyautogui.click()
 
     def click_cord(self, x_cord, y_cord):
-        print(f"Clicking at {x_cord}, {y_cord}")
         pyautogui.moveTo(x=x_cord, y=y_cord)
         pyautogui.click()
+        time.sleep(self.sleep_time)
+        
     
     def ai_neurons(self):
         # first get the command from the input queue
         command = self.input_queue.get()
-        print(command[0])
-        time.sleep(3)
         if self.use_model:
             # get the current frame
             frame = self.wincap.get_frame()
@@ -117,31 +121,28 @@ class Ai:
                 # click the item
                 # item 1 of the found item is the cords
                 self.click(found_item[1])
+            # clears the found queue
+            self.found_queue.queue.clear()
         else:
             # search through a data based based on the command to get a known coordinate
-            
-            # something about seraching the data bases is not working
-            # try printing data after the search
-
-            data = db.search_data_class(self.data_base, command)
+            data = db.search_data_class(self.data_base, command[0])
             if data is not None:
-                # click the coordinate
-                print(f"{data.coordinate[0]} type {type(data.coordinate[0])}")
-                self.click_cord(data.coordinate[0], data.coordinate[1])
+                # click the coordinates
+                offset_x = random.randint(-data.delta_x, data.delta_x)
+                offset_y = random.randint(-data.delta_y, data.delta_y)
+                self.click_cord(data.coordinate[0]+offset_x, data.coordinate[1]+offset_y)
             else:
                 print("No data found")
-
-        # clears the found queue
-        self.found_queue.queue.clear()
 
     def run_ai(self):
         # checks if the input queue is empty
         # ai only runs if there is an input
         if (self.input_queue.empty()):
             print("No inputs")
-            return None
+            return 1
         else:
             self.ai_neurons()
+            return 0
 
     def test_model(self):
         Tk().withdraw()

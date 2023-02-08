@@ -4,6 +4,9 @@ images/
 __pycache__/
 dataset/
 
+test.py
+testPython.py
+
 *.pt
 *.zip
 *.bat
