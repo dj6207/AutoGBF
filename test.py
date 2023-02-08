@@ -21,14 +21,12 @@
 # detect.test_model()
 ###########################################################################
 import cv2 as cv
-import database.dataBase as db
 from ai import Ai
-db.init_database(".\\database\\data_classes.pickle")
 slime = Ai(browser_name="Task Manager", use_model=False)
 while (True):
     # slime.test_ai_vision()
-    if (slime.run_ai()):
+    if slime.run_ai() is None:
         break
-    # if cv.waitKey(1) == ord('q'):
-    #     cv.destroyAllWindows()
-    #     break
+    if cv.waitKey(1) == ord('q'):
+        cv.destroyAllWindows()
+        break
