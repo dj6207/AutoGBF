@@ -16,9 +16,10 @@ from inputParser import InputParser
 # Try to make the mouse movement more realistic
 class Ai:
     #Inintalizes the ai
-    def __init__(self, model_path="./model/best_dataset1.pt", browser_name="Granblue Fantasy - Google Chrome", use_model=True, sleep_time=7):
+    def __init__(self, model_path="./model/best_dataset1.pt", browser_name="Granblue Fantasy - Google Chrome", use_model=True, sleep_time=7, sleep_delta=3):
         # load custom model
         self.sleep_time = sleep_time
+        self.sleep_dela = sleep_delta
         if use_model:
             self.use_model = True
             self.model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload = True)
@@ -100,9 +101,10 @@ class Ai:
         pyautogui.click()
 
     def click_cord(self, x_cord, y_cord):
-        pyautogui.moveTo(x=x_cord, y=y_cord)
+        pyautogui.moveTo(x=x_cord, y=y_cord, duration=0.2)
         pyautogui.click()
-        time.sleep(self.sleep_time)
+        wait_time = random.randint(self.sleep_time, self.sleep_time + self.sleep_delta)
+        time.sleep(wait_time)
         
     
     def ai_neurons(self):
