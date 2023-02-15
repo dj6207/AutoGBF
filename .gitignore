@@ -1,0 +1,11 @@
+.venv/
+dataset/
+database/
+yolov5/
+__pycache__/
+
+test.py
+testPython.py
+
+*.pt
+*.zip

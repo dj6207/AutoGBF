@@ -1,0 +1,11 @@
+back
+slime
+reload
+summon_slot_1
+party_screen_ok
+character_slot_1
+skill_slot_1
+skill_slot_2
+attack_button
+reload_button
+sakura_event_raid_lvl60_play
